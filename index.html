@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>mobile wheel</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+    </style>
+    <script>
+        function loadAudioFiles() {
+            notes = []
+            for (let i = 1; i <= 55; i++) {
+                file_name = "./notes/" + i + ".mp3"
+                notes.push(new Audio(file_name))
+            }
+        }
+
+        loadAudioFiles()
+
+        function handleOrientation(event) {
+            rand = 1 + Math.floor(Math.random() * 54)
+            try {
+                notes[rand].play()
+            } catch (e) {
+                console.log(e)
+                console.log(rand)
+            }
+            document.getElementById("alpha").innerHTML = "alpha: " + event.alpha
+            document.getElementById("beta").innerHTML = "beta: " + event.beta
+            document.getElementById("gamma").innerHTML = "gamma: " + event.gamma
+
+
+        }
+        function handleLinearAccleration() {
+            let laSensor = new LinearAccelerationSensor({ frequency: 60 });
+
+            laSensor.addEventListener('reading', (e) => {
+                console.log(`Linear acceleration along the X-axis ${laSensor.x}`);
+                console.log(`Linear acceleration along the Y-axis ${laSensor.y}`);
+                console.log(`Linear acceleration along the Z-axis ${laSensor.z}`);
+            });
+            laSensor.start();
+        }
+        function startLinearAccleration() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // Handle iOS 13+ devices.
+                DeviceOrientationEvent.requestPermission()
+                    .then((state) => {
+                        if (state === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        } else {
+                            alert("permision not granted", state)
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Handle regular non iOS 13+ devices.
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
+
+        function startDeviceOrientation() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // Handle iOS 13+ devices.
+                DeviceOrientationEvent.requestPermission()
+                    .then((state) => {
+                        if (state === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        } else {
+                            alert("permision not granted", state)
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Handle regular non iOS 13+ devices.
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        }
+        function stopDeviceOrientation() {
+            window.removeEventListener('deviceorientation', handleOrientation)
+        }
+        function handleMotionEvent(event) {
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                // Handle iOS 13+ devices.
+                DeviceMotionEvent.requestPermission()
+                    .then((state) => {
+                        if (state === 'granted') {
+                            window.addEventListener('devicemotion', handleMotion);
+                        } else {
+                            alert("permision not granted", state)
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Handle regular non iOS 13+ devices.
+                window.addEventListener('devicemotion', handleMotion);
+            }
+        }
+        function handleMotion(event) {
+            console.log(event)
+            setTimeout(() => {
+                document.getElementById("altitude").innerHTML = "altitude: " + event.accelerationIncludingGravity.y;
+                document.getElementById("longitude").innerHTML = "longitude: " + event.acceleration.y;
+                document.getElementById("latitude").innerHTML = "latitude: " + event.rotationRate.gamma;
+            }, 1000)
+
+
+            // Do something awesome.
+        }
+        function linearAccleration() {
+            alert(1)
+            navigator.permissions.query({ name: "accelerometer" }).then((result) => {
+                alert(result)
+                if (result.state === "denied") {
+                    alert("denied")
+                    console.log("Permission to use accelerometer sensor is denied.");
+                    return;
+                }
+                alert("done")
+                // Use the sensor.
+            });
+        }
+
+    </script>
+
+</head>
+
+<body>
+    mobile piano
+    <button onclick=startDeviceOrientation()>Start</button>
+    <button onclick=stopDeviceOrientation()>Stop</button>
+    <button onclick=linearAccleration()>Start motion</button>
+    <div id="alpha">alpha: </div>
+    <div id="beta">beta: </div>
+    <div id="gamma">gama: </div>
+    <div id="altitude">altitude: </div>
+    <div id="longitude">longitude: </div>
+    <div id="latitude">latitude: </div>
+    <!-- <button onclick=startLinearAccleration()>Start</button>
+    <button onclick=handleLinearAccleration()>Stop</button> -->
+</body>
+
+</html>
