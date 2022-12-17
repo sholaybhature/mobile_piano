@@ -1,0 +1,1 @@
+wanted to use phone as a piano, y axis for different octaves and y rotation for pressing of keys. but didn't get time to figure out how to calculate the y axis distance, some sensors are available, easier using an app but not sure how to do it correctly using accleration apis, gps isn't reliable :(
